@@ -1,0 +1,37 @@
+FROM python:3.12.0b1-alpine3.18
+
+ARG UID=1000
+ARG GID=1000
+
+RUN apk update && apk upgrade && apk add --no-cache --update \
+    ansible \
+    bash \
+    curl \
+    docker \
+    g++ \
+    go \
+    git \
+    libxml2 \
+    libxml2-dev \
+    libxslt-dev \
+    openssh-client \
+    rsync \
+    shellcheck \
+    sudo \
+    tar \
+    unzip \
+    && rm -rf /var/cache/apk/*
+
+COPY *.sh ./
+
+RUN ./packer_version.sh && \
+    ./terraform_version.sh && \
+    rm -rf /tmp/*
+
+RUN addgroup -g "${GID}" python \
+  && adduser -u "${UID}" -D -G python python
+
+USER python
+
+WORKDIR /usr/local/bin
+CMD ["/bin/bash"]

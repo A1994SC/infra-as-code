@@ -10,7 +10,7 @@ variable "domains" {
 variable "records" {
   type                             = map(object({
     zone                           = string
-    type                           = string
+    type                           = optional(string, "A")
     record                         = list(string)
     ttl                            = optional(number, 300)
     set_ptr                        = optional(bool, false)

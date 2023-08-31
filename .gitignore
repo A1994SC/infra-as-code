@@ -41,6 +41,9 @@ override.tf.json
 .terraformrc
 terraform.rc
 
+## Ignore misc
+target/
+
 ## Ignore direnv
 .envrc
 !terraform/**/.envrc

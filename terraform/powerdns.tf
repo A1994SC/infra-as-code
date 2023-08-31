@@ -41,14 +41,24 @@ locals {
 }
 
 resource "powerdns_zone" "zones" {
-  for_each                         = var.domains
+  for_each                         = var.zones
   name                             = "${each.key}"
   kind                             = each.value.kind
+  soa_edit_api                     = each.value.soa_edit_api
   nameservers                      = each.value.nameservers
 }
 
-resource "powerdns_record" "records" {
+resource "powerdns_zone" "sub-zones" {
   depends_on                       = [ powerdns_zone.zones ]
+  for_each                         = var.subzones
+  name                             = "${each.key}"
+  kind                             = "Slave"
+  soa_edit_api                     = each.value.soa_edit_api
+  masters                          = each.value.masters
+}
+
+resource "powerdns_record" "records" {
+  depends_on                       = [ powerdns_zone.sub-zones ]
   for_each                         = var.records
   set_ptr                          = false
   ttl                              = each.value.ttl

@@ -1,27 +1,4 @@
-terraform {
-  required_providers {
-    powerdns = {
-      source  = "pan-net/powerdns"
-      version = "1.5.0"
-    }
-  }
-}
-
 provider "powerdns" { }
-
-# resource "powerdns_zone" "adrp-xyz" {
-#   name        = "adrp.xyz."
-#   kind        = "Native"
-#   nameservers = ["dns1.adrp.xyz.", "dns2.adrp.xyz."]
-# }
-
-# resource "powerdns_zone" "native-arpa" {
-#   name        = "10.in-addr.arpa."
-#   kind        = "Native"
-#   nameservers = ["dns1.adrp.xyz.", "dns2.adrp.xyz."]
-# }
-
-
 
 locals {
   ptr_record = merge([
@@ -58,7 +35,7 @@ resource "powerdns_zone" "sub-zones" {
 }
 
 resource "powerdns_record" "records" {
-  depends_on                       = [ powerdns_zone.sub-zones ]
+  depends_on                       = [ powerdns_zone.zones, powerdns_zone.sub-zones ]
   for_each                         = var.records
   set_ptr                          = false
   ttl                              = each.value.ttl
@@ -69,7 +46,7 @@ resource "powerdns_record" "records" {
 }
 
 resource "powerdns_record" "records-ptr" {
-  depends_on                       = [ powerdns_zone.zones ]
+  depends_on                       = [ powerdns_zone.zones, powerdns_zone.sub-zones ]
   for_each                         = local.ptr_record
   ttl                              = 300
   set_ptr                          = false

@@ -12,4 +12,12 @@ records                            = {
     zone                           = "adrp.xyz."
     record                         = [ "10.3.10.6" ]
   }
+  "matchbox"                       = {
+    zone                           = "adrp.xyz."
+    record                         = [ "10.3.20.6" ]
+  }
+  "step"                       = {
+    zone                           = "adrp.xyz."
+    record                         = [ "10.3.20.5" ]
+  }
 }

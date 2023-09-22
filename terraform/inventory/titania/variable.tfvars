@@ -68,15 +68,15 @@ matchbox_talos                     = {
       "talos.config=http://10.3.20.6:8080/assets/talos/cluster/titania/worker.yml"
     ]
   }
-  # "kw3"                            = {
-  #   kernel                         = "/assets/talos/v1.5.2/vmlinuz-amd64"
-  #   initrd                         = [ "/assets/talos/v1.5.2/initramfs-amd64.xz" ]
-  #   records                        = [ "10.3.20.22" ]
-  #   selector                       = {
-  #     mac                          = "94:c6:91:a0:84:27" # 94-c6-91-a0-84-27
-  #   }
-  #   extra_args                     = [
-  #     "talos.config=http://10.3.20.6:8080/assets/talos/cluster/titania/worker.yml"
-  #   ]
-  # }
+  "kw3"                            = {
+    kernel                         = "/assets/talos/v1.5.2/vmlinuz-amd64"
+    initrd                         = [ "/assets/talos/v1.5.2/initramfs-amd64.xz" ]
+    records                        = [ "10.3.20.22" ]
+    selector                       = {
+      mac                          = "18:c0:4d:83:8d:8a" # 18-c0-4d-83-8d-8a
+    }
+    extra_args                     = [
+      "talos.config=http://10.3.20.6:8080/assets/talos/cluster/titania/worker.yml"
+    ]
+  }
 }

@@ -45,16 +45,38 @@ resource "powerdns_record" "match-records-ptr" {
 resource "matchbox_profile" "talos" {
   for_each                         = var.matchbox_talos
   name                             = "${var.matchbox_profile_name}-${each.key}"
-  kernel                           = each.value.kernel
-  initrd                           = each.value.initrd
+  kernel                           = "/assets/talos/${var.matchbox_talos_version}/vmlinuz-${each.value.arch}"
+  initrd                           = [ "/assets/talos/${var.matchbox_talos_version}/initramfs-${each.value.arch}.xz" ]
   args                             = concat(
     [
       "initrd=initramfs-${each.value.arch}.xz",
-      "talos.hostname=${var.matchbox_profile_name}-${each.key}"
+      "talos.hostname=${var.matchbox_profile_name}-${each.key}",
+      "talos.config=http://10.3.20.6:8080/assets/talos/ignition/${var.matchbox_profile_name}-${each.key}.ign"
     ],
     var.matchbox_talos_args,
     each.value.extra_args
   )
+  raw_ignition = templatefile("${path.root}/template/talos-${each.value.type}.yml", {
+    install_drive                  = each.value.install_drive
+    talos_version                  = var.matchbox_talos_version
+    kubernetes_version             = var.matchbox_talos_kubernetes_version
+    hostname                       = "${var.matchbox_profile_name}-${each.key}"
+    profile_name                   = var.matchbox_profile_name
+    machine_token                  = var.matchbox_talos_config.machine_token
+    machine_ca_cert                = var.matchbox_talos_config.machine_ca_cert
+    machine_ca_key                 = each.value.type != "worker" ? var.matchbox_talos_config.machine_ca_key     : ""
+    cluster_id                     = var.matchbox_talos_config.cluster_id
+    cluster_secret                 = var.matchbox_talos_config.cluster_secret
+    cluster_token                  = var.matchbox_talos_config.cluster_token
+    cluster_secretbox              = each.value.type != "worker" ? var.matchbox_talos_config.cluster_secretbox  : ""
+    cluster_ca_cert                = var.matchbox_talos_config.cluster_ca_cert
+    cluster_ca_key                 = each.value.type != "worker" ? var.matchbox_talos_config.cluster_ca_key     : ""
+    cluster_ca_agg_cert            = each.value.type != "worker" ? var.matchbox_talos_config.cluster_ca_agg_cert: ""
+    cluster_ca_agg_key             = each.value.type != "worker" ? var.matchbox_talos_config.cluster_ca_agg_key : ""
+    cluster_sa_key                 = each.value.type != "worker" ? var.matchbox_talos_config.cluster_sa_key     : ""
+    cluster_etcd_ca_cert           = each.value.type != "worker" ? var.matchbox_talos_config.cluster_etcd_ca_cert: ""
+    cluster_etcd_ca_key            = each.value.type != "worker" ? var.matchbox_talos_config.cluster_etcd_ca_key: ""
+  })
 }
 
 resource "matchbox_group" "talos" {

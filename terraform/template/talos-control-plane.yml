@@ -1,0 +1,122 @@
+version: v1alpha1
+persist: true
+machine:
+  type: controlplane
+  token: ${machine_token}
+  ca:
+    crt: ${machine_ca_cert}
+    key: ${machine_ca_key}
+  certSANs: []
+  kubelet:
+    image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
+    defaultRuntimeSeccompProfileEnabled: true
+    disableManifestsDirectory: true
+    extraArgs:
+      rotate-server-certificates: true
+  network:
+    hostname: ${hostname}
+  install:
+    disk: ${install_drive}
+    image: ghcr.io/siderolabs/installer:${talos_version}
+    bootloader: true
+    wipe: false
+  registries: {}
+  features:
+    rbac: true
+    stableHostname: false
+    apidCheckExtKeyUsage: true
+    diskQuotaSupport: true
+    kubePrism:
+      enabled: true
+      port: 7445
+  files:
+  - content: |
+      -----BEGIN CERTIFICATE-----
+      MIIBdDCCARqgAwIBAgIRANkYt8S37DW7KItbxVZr9OUwCgYIKoZIzj0EAwIwGDEW
+      MBQGA1UEAxMNRGVycHkgUm9vdCBDQTAeFw0yMDEyMzEwMDI1NTNaFw0zMDEyMzEw
+      MDI1NTNaMBgxFjAUBgNVBAMTDURlcnB5IFJvb3QgQ0EwWTATBgcqhkjOPQIBBggq
+      hkjOPQMBBwNCAATOFoME0It/e323PaeOgrrQZGUGbz3AovjJBBDLAkwld057duoq
+      2ppzrcNQYm3/KfFJrGZUbel0PHpIqh4ufFJWo0UwQzAOBgNVHQ8BAf8EBAMCAQYw
+      EgYDVR0TAQH/BAgwBgEB/wIBATAdBgNVHQ4EFgQUSCs2bRDtMPz4sfHi3sUfJLw5
+      nVgwCgYIKoZIzj0EAwIDSAAwRQIhALmYLFGo9FUAGP6wY8vj1Q5wRXW6n6xV/S6T
+      RG/LtMsYAiBwzyJT5Ht+D/KnxHCqhDTxb/kQQL41IyEcswrIdDF4wA==
+      -----END CERTIFICATE-----
+    permissions: 420
+    path: /etc/ssl/certs/ca-certificates
+    op: append
+cluster:
+  id: ${cluster_id}
+  secret: ${cluster_secret}
+  controlPlane:
+    endpoint: https://${profile_name}-kc.adrp.xyz:6443
+  clusterName: titania
+  network:
+    dnsDomain: cluster.local
+    podSubnets:
+    - 10.244.0.0/16
+    serviceSubnets:
+    - 10.96.0.0/12
+    cni:
+      name: none
+  coreDNS:
+    disabled: true
+  token: ${cluster_token}
+  secretboxEncryptionSecret: ${cluster_secretbox}
+  ca:
+    crt: ${cluster_ca_cert}
+    key: ${cluster_ca_key}
+  aggregatorCA:
+    crt: ${cluster_ca_agg_cert}
+    key: ${cluster_ca_agg_key}
+  serviceAccount:
+    key: ${cluster_sa_key}
+  apiServer:
+    image: registry.k8s.io/kube-apiserver:${kubernetes_version}
+    certSANs: []
+    disablePodSecurityPolicy: true
+    admissionControl:
+    - name: PodSecurity
+      configuration:
+        kind: PodSecurityConfiguration
+        apiVersion: pod-security.admission.config.k8s.io/v1alpha1
+        defaults:
+          audit: restricted
+          audit-version: latest
+          enforce: baseline
+          enforce-version: latest
+          warn: restricted
+          warn-version: latest
+        exemptions:
+          namespaces:
+          - kube-system
+          runtimeClasses: []
+          usernames: []
+    auditPolicy:
+      apiVersion: audit.k8s.io/v1
+      kind: Policy
+      rules:
+      - level: Metadata
+  controllerManager:
+    image: registry.k8s.io/kube-controller-manager:${kubernetes_version}
+  proxy:
+    disabled: true
+  scheduler:
+    image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+  discovery:
+    enabled: true
+    registries:
+      kubernetes:
+        disabled: true
+      service: {}
+  etcd:
+    ca:
+      crt: ${cluster_etcd_ca_cert}
+      key: ${cluster_etcd_ca_key}
+  extraManifests:
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/cluster-role-binding.yml
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/cluster-role.yml
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/configmap.yml
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/deployment.yml
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/service-account.yml
+  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/service.yml
+  inlineManifests: []

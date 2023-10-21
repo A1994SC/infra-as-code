@@ -50,14 +50,15 @@ variable "matchbox_profile_name" {
 
 variable "matchbox_talos" {
   type                             = map(object({
-    kernel                         = string
-    initrd                         = list(string)
     selector                       = map(string)
     records                        = list(string)
+    version                        = optional(string, "")
     arch                           = optional(string, "amd64")
+    type                           = optional(string, "worker")
     extra_args                     = optional(list(string), [])
     set_ptr                        = optional(bool, true)
     metadata                       = optional(map(string), {})
+    install_drive                  = optional(string, "/dev/nvme0n1")
   }))
   description                      = "List of matchbox settings to create; creates both profile(s) and group(s)"
   default                          = { }
@@ -75,4 +76,37 @@ variable "matchbox_talos_args" {
     "printk.devkmsg=on",
     "talos.platform=metal"
   ]
+}
+
+variable "matchbox_talos_version" {
+  type                             = string
+  description                      = "Talos vesion"
+  default                          = "v1.5.3"
+}
+
+variable "matchbox_talos_kubernetes_version" {
+  type                             = string
+  description                      = "Talos vesion"
+  default                          = "v1.28.2"
+}
+
+variable "matchbox_talos_config" {
+  description                      = ""
+  type                             = object({
+    machine_token                  = string
+    machine_ca_cert                = string
+    machine_ca_key                 = string
+    cluster_id                     = string
+    cluster_secret                 = string
+    cluster_token                  = string
+    cluster_secretbox              = string
+    cluster_ca_cert                = string
+    cluster_ca_key                 = string
+    cluster_ca_agg_cert            = string
+    cluster_ca_agg_key             = string
+    cluster_sa_key                 = string
+    cluster_etcd_ca_cert           = string
+    cluster_etcd_ca_key            = string
+  })
+  default                          = null
 }

@@ -81,13 +81,13 @@ variable "matchbox_talos_args" {
 variable "matchbox_talos_version" {
   type                             = string
   description                      = "Talos vesion"
-  default                          = "v1.5.3"
+  default                          = "v1.5.2"
 }
 
 variable "matchbox_talos_kubernetes_version" {
   type                             = string
   description                      = "Talos vesion"
-  default                          = "v1.28.2"
+  default                          = "v1.28.1"
 }
 
 variable "matchbox_talos_config" {

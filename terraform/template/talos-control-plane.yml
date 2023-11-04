@@ -103,7 +103,7 @@ cluster:
   scheduler:
     image: registry.k8s.io/kube-scheduler:${kubernetes_version}
   discovery:
-    enabled: true
+    enabled: false
     registries:
       kubernetes:
         disabled: true
@@ -112,11 +112,5 @@ cluster:
     ca:
       crt: ${cluster_etcd_ca_cert}
       key: ${cluster_etcd_ca_key}
-  extraManifests:
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/cluster-role-binding.yml
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/cluster-role.yml
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/configmap.yml
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/deployment.yml
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/service-account.yml
-  - https://github.com/A1994SC/fluxcd/raw/main/utilities/coredns/service.yml
+  extraManifests: []
   inlineManifests: []

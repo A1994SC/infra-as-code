@@ -1,4 +1,9 @@
-provider "powerdns" { }
+provider "powerdns" {
+  api_key        = data.sops_file.powerdns.data["power.api"]
+  ca_certificate = data.sops_file.powerdns.data["power.ca"]
+  server_url     = data.sops_file.powerdns.data["power.url"]
+  insecure_https = false
+}
 
 locals {
   ptr_record = merge([

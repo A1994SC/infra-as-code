@@ -1,0 +1,7 @@
+keys:
+- &allen        age1zsuk65xk39mdnewvm4z8mhp5r9ry36lfuafvp4d460a9vezpduxsnhwa75
+creation_rules:
+- path_regex: terraform/inventory/.*\.enc\..*
+  key_groups:
+  - age:
+    - *allen

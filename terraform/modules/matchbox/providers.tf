@@ -12,5 +12,9 @@ terraform {
       source  = "poseidon/matchbox"
       version = ">=0.5.2"
     }
+    sops = {
+      source = "carlpett/sops"
+      version = ">=1.0.0"
+    }
   }
 }

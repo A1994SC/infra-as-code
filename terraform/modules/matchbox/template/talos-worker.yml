@@ -1,11 +1,12 @@
 version: v1alpha1
+debug: false
 persist: true
 machine:
-  type: controlplane
+  type: worker
   token: ${machine_token}
   ca:
     crt: ${machine_ca_cert}
-    key: ${machine_ca_key}
+    key: ""
   certSANs: []
   kubelet:
     image: ghcr.io/siderolabs/kubelet:${kubernetes_version}
@@ -15,6 +16,9 @@ machine:
       rotate-server-certificates: true
   network:
     hostname: ${hostname}
+  time:
+    servers:
+    - time.cloudflare.com
   install:
     disk: ${install_drive}
     image: ghcr.io/siderolabs/installer:${talos_version}
@@ -44,12 +48,17 @@ machine:
     permissions: 420
     path: /etc/ssl/certs/ca-certificates
     op: append
+  - content: |
+      [metrics]
+        address = "0.0.0.0:11234"
+    permissions: 0o644
+    path: /var/cri/conf.d/metrics.toml
+    op: create
 cluster:
   id: ${cluster_id}
   secret: ${cluster_secret}
   controlPlane:
     endpoint: https://${profile_name}-kc.adrp.xyz:6443
-  clusterName: titania
   network:
     dnsDomain: cluster.local
     podSubnets:
@@ -60,57 +69,16 @@ cluster:
       name: none
   coreDNS:
     disabled: true
-  token: ${cluster_token}
-  secretboxEncryptionSecret: ${cluster_secretbox}
-  ca:
-    crt: ${cluster_ca_cert}
-    key: ${cluster_ca_key}
-  aggregatorCA:
-    crt: ${cluster_ca_agg_cert}
-    key: ${cluster_ca_agg_key}
-  serviceAccount:
-    key: ${cluster_sa_key}
-  apiServer:
-    image: registry.k8s.io/kube-apiserver:${kubernetes_version}
-    certSANs: []
-    disablePodSecurityPolicy: true
-    admissionControl:
-    - name: PodSecurity
-      configuration:
-        kind: PodSecurityConfiguration
-        apiVersion: pod-security.admission.config.k8s.io/v1alpha1
-        defaults:
-          audit: restricted
-          audit-version: latest
-          enforce: baseline
-          enforce-version: latest
-          warn: restricted
-          warn-version: latest
-        exemptions:
-          namespaces:
-          - kube-system
-          runtimeClasses: []
-          usernames: []
-    auditPolicy:
-      apiVersion: audit.k8s.io/v1
-      kind: Policy
-      rules:
-      - level: Metadata
-  controllerManager:
-    image: registry.k8s.io/kube-controller-manager:${kubernetes_version}
   proxy:
     disabled: true
-  scheduler:
-    image: registry.k8s.io/kube-scheduler:${kubernetes_version}
+  token: ${cluster_token}
+  ca:
+    crt: ${cluster_ca_cert}
+    key: ""
   discovery:
-    enabled: false
+    enabled: true
     registries:
       kubernetes:
+        disabled: false
+      service:
         disabled: true
-      service: {}
-  etcd:
-    ca:
-      crt: ${cluster_etcd_ca_cert}
-      key: ${cluster_etcd_ca_key}
-  extraManifests: []
-  inlineManifests: []

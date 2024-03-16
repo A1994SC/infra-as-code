@@ -10,17 +10,6 @@ variable "harbor_http_endpoint_insecure" {
   default                          = true
 }
 
-variable "harbor_admin_username" {
-  type                             = string
-  sensitive                        = true
-  default                          = "admin"
-}
-
-variable "harbor_admin_password" {
-  type                             = string
-  sensitive                        = true
-}
-
 variable "harbor_proxy" {
   type                             = map(object({
     url                            = string

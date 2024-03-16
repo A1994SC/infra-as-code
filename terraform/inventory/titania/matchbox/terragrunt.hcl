@@ -55,5 +55,26 @@ inputs = {
         mac = "94:c6:91:ad:c6:80" # 94-c6-91-ad-c6-80
       }
     }
+    "kw1" = {
+      records = ["10.3.20.28"]
+      selector = {
+        mac = "94:c6:91:1d:60:ff" # 94-c6-91-1d-60-ff
+      }
+      install_drive = "/dev/sda"
+    }
+    "kw2" = {
+      records = ["10.3.20.29"]
+      selector = {
+        mac = "94:c6:91:1f:1d:15" # 94-c6-91-1f-1d-15
+      }
+      install_drive = "/dev/sda"
+    }
+    "kw3" = {
+      records = ["10.3.20.30"]
+      selector = {
+        mac = "1c:69:7a:a5:ca:ca" # 1c-69-7a-a5-ca-ca
+      }
+      # install_drive = "/dev/sda"
+    }
   }
 }

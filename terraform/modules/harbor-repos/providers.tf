@@ -4,9 +4,9 @@ terraform {
       source = "goharbor/harbor"
       version = ">=3.10.6"
     }
-    kubernetes = {
-      source = "hashicorp/kubernetes"
-      version = ">=2.25.2"
+    sops = {
+      source = "carlpett/sops"
+      version = ">=1.0.0"
     }
   }
 }
